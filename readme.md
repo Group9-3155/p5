@@ -1,5 +1,5 @@
 # \<Project Name\> Scrum Team
-## Group 9
+## Product Owner
 \<Team Member Name\>
 ## Scrum Master
 \<Team Member Name\>
