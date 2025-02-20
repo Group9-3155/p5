@@ -52,7 +52,7 @@
    };
 
    // Create init users.
-
+   // check
    var im = {_id: "57231f1a30e4351f4e9f4bd7", first_name: "Ian", last_name: "Malcolm", 
              location: "Austin, TX", description: "Should've stayed in the car.", occupation: "Mathematician"};
    var er = {_id: "57231f1a30e4351f4e9f4bd8", first_name: "Ellen", last_name: "Ripley", 
