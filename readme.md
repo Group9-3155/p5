@@ -1,4 +1,4 @@
-# \<Project5\> Scrum Team
+# \<Group 9\> Scrum Team
 ## Group9
 \<Team Member Name\>
 ## Scrum Master
