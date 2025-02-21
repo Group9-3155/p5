@@ -1,9 +1,9 @@
 # \<Group 9\> Scrum Team
 ## Group9
-\<Team Member Name\>
+\<Ryan Hilliard\>
 ## Scrum Master
-\<Team Member Name\>
+\<Felton Wright\>
 ## Developers
-- \<Team Member Name\>
-- \<Team Member Name\>
-- \<Team Member Name\>
+- \<Aravind Pasupathi\>
+- \<Emil Johnson\>
+- \<Adithya Chakka\>
