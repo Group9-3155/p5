@@ -94,4 +94,11 @@ var server = app.listen(portno, function () {
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const multer = require("multer");
+/* Project 6 Additions to webServer.js - 
+ * This builds on the webServer of previous projects in that it exports the
+ * current directory via webserver listing on a hard code port.
+ * It also establishes a connection to the MongoDB named 'project6'. */
+
+const mongoose = require("mongoose");
+mongoose.Promise = require("bluebird");
 
