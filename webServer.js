@@ -94,6 +94,7 @@ var server = app.listen(portno, function () {
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const multer = require("multer");
+
 /* Project 6 Additions to webServer.js - 
  * This builds on the webServer of previous projects in that it exports the
  * current directory via webserver listing on a hard code port.
@@ -102,3 +103,22 @@ const multer = require("multer");
 const mongoose = require("mongoose");
 mongoose.Promise = require("bluebird");
 
+const async = require("async");
+const express = require("express");
+const app = express();
+
+// Load the Mongoose schema for User, Photo, and SchemaInfo
+const User = require("./schema/user.js");
+const Photo = require("./schema/photo.js");
+const SchemaInfo = require("./schema/schemaInfo.js");
+
+mongoose.set("strictQuery", false);
+mongoose.connect("mongodb://127.0.0.1/project6", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+app.use(express.static(__dirname));
+app.get("/", function (request, response) {
+  response.send("Simple web server of files from" + __dirname)
+});
