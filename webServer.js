@@ -244,3 +244,78 @@ app.get("/user/:id", function (request, response) {
     response.end(JSON.stringify(user[0]));
   });
 });
+
+/**
+ * URL /photosOfUser/:id - Returns the Photos for User (id).
+ */
+app.get("/photosOfUser/:id", function (request, response) {
+  const id = request.params.id;
+  Photo.aggregate([
+    { $match:
+          {user_id: {$eq: new mongoose.Types.ObjectId(id)}}
+    },
+    { $addFields: {
+      comments: { $ifNull : ["$comments", []] }
+    } },
+    { $lookup: {
+        from: "users",
+        localField: "comments.user_id",
+        foreignField: "_id",
+        as: "users"
+      } },
+    { $addFields: {
+        comments: {
+          $map: {
+            input: "$comments",
+            in: {
+              $mergeObjects: [
+                "$$this",
+                { user: {
+                    $arrayElemAt: [
+                      "$users",
+                      {
+                        $indexOfArray: [
+                          "$users._id",
+                          "$$this.user_id"
+                        ]
+                      }
+                    ]
+                  } }
+              ]
+            }
+          }
+        }
+      } },
+    { $project: {
+        users: 0,
+        __v: 0,
+        "comments.__v": 0,
+        "comments.user_id": 0,
+        "comments.user.location": 0,
+        "comments.user.description": 0,
+        "comments.user.occupation": 0,
+        "comments.user.__v": 0
+      } }
+  ], function (err, photos) {
+    if (err) {
+      // Query returned an error. We pass it back to the browser with an
+      // Internal Service Error (500) error code.
+      console.error("Error in /photosOfUser/:id", err);
+      response.status(500).send(JSON.stringify(err));
+      return;
+    }
+    if (photos.length === 0) {
+      // Query didn't return an error but didn't find the SchemaInfo object -
+      // This is also an internal error return.
+      response.status(400).send();
+      return;
+    }
+    // We got the object - return it in JSON format.
+    response.end(JSON.stringify(photos));
+  });
+});
+
+const server = app.listen(3000, function () {
+  const port = server.address().port;
+  console.log("Listening at http://localhost:" + port + " exporting the directory " + __dirname);
+});
