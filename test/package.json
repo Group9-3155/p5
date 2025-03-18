@@ -5,7 +5,8 @@
   "description": "Mocha test of server API",
   "main": "serverApiTest.js",
   "dependencies": {
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "project6test": "file:"
   },
   "devDependencies": {
     "mocha": "^9.2.0"
