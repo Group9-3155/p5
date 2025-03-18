@@ -35,13 +35,13 @@ class TopBar extends React.Component {
 
   render() {
     return this.state.app_info ? (
-        <AppBar className="topbar-appBar" position="absolute" sx={{ backgroundColor: 'orange' }}>
-        <Toolbar>
-            <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>Group 9</Typography>
-            <Typography variant="h5" component="div" sx={{ flexGrow: 1 }} color="inherit">{this.props.main_content}</Typography>
-            <Typography variant="h5" component="div" color="inherit">Version: {this.state.app_info.version}</Typography>
-        </Toolbar>
-      </AppBar>
+        <AppBar className="topbar-appBar" position="absolute">
+            <Toolbar>
+                <Typography variant="h5" component="div" sx={{ flexGrow: 1 }}>Group 9</Typography>
+                <Typography variant="h5" component="div" sx={{ flexGrow: 1 }} color="inherit">{this.props.main_content}</Typography>
+                <Typography variant="h5" component="div" color="inherit">Version: {this.state.app_info.version}</Typography>
+            </Toolbar>
+        </AppBar>
     ) : (
         <div/>
     );
