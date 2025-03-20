@@ -1,5 +1,6 @@
 .topbar-appBar {
   height: 60;
   justify-content: 'center';
+  /* could be causing an error */
   background-color: orange !important;
 }

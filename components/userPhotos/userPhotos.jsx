@@ -6,8 +6,9 @@ import {
 import './userPhotos.css';
 import axios from 'axios';
 
+
 /**
- * Define UserPhotos, a React componment of project #5
+ * Define UserPhotos, a React component of project #5
  */
 class UserPhotos extends React.Component {
     constructor(props) {
@@ -61,13 +62,13 @@ class UserPhotos extends React.Component {
                 console.log('catch2');
             });
     }
-    
+
     handleNewCommentChange = (event) => {
         this.setState({
             new_comment: event.target.value
         });
     };
-    
+
     handleShowAddComment = (event) => {
         const photo_id = event.target.attributes.photo_id.value;
         this.setState({
@@ -75,7 +76,7 @@ class UserPhotos extends React.Component {
             current_photo_id: photo_id
         });
     };
-    
+
     handleCancelAddComment = () => {
         this.setState({
             add_comment: false,
@@ -83,7 +84,7 @@ class UserPhotos extends React.Component {
             current_photo_id: undefined
         });
     };
-    
+
     handleSubmitAddComment = () => {
         const currentState = JSON.stringify({comment: this.state.new_comment});
         const photo_id = this.state.current_photo_id;
@@ -99,7 +100,7 @@ class UserPhotos extends React.Component {
             {
                 this.setState({
                     add_comment : false,
-                       new_comment: undefined,
+                    new_comment: undefined,
                     current_photo_id: undefined
                 });
                 axios.get("/photosOfUser/" + user_id)
@@ -114,7 +115,7 @@ class UserPhotos extends React.Component {
                 console.log(error);
             });
     };
-    
+
     render() {
         return this.state.user_id ? (
             <div>

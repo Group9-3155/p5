@@ -40,7 +40,6 @@ class PhotoShare extends React.Component {
     if (user === undefined) this.changeMainContent(undefined);
   };
 
-
   render() {
     return (
       <HashRouter>
