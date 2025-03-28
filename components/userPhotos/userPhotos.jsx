@@ -23,7 +23,7 @@ class UserPhotos extends React.Component {
         this.handleCancelAddComment = this.handleCancelAddComment.bind(this);
         this.handleSubmitAddComment = this.handleSubmitAddComment.bind(this);
     }
-
+//Minor Changes
     componentDidMount() {
         const new_user_id = this.props.match.params.userId;
         this.handleUserChange(new_user_id);
