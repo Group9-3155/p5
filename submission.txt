@@ -1,0 +1,20 @@
+Project 8 - Submission Form
+
+* Story number and name:  7 - Favorite Lists of Photos for Users
+* Story points:  6
+* Brief description to see the story in action:
+* A logged-in user should be able to favorite photos and have a user-specific list 
+* of favorites appear on a new page (path: /favorites). 
+* 
+* Total Story Points: 6
+* 
+* Marketing Video URL (ensure permissions are set to public viewing):
+* http://www.youtube.com ---
+* 
+* Is it OK if we post your Marketing Video URL on the class discussion forum?
+* Yes
+* 
+* Any special instructions for grading (it should be easy for someone to run
+* your app from a new machine):
+* None
+************************************ Example ***********************************
