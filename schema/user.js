@@ -13,7 +13,8 @@ var userSchema = new mongoose.Schema({
   description: String,
   occupation: String,
   login_name: String,
-  password: String
+  password: String,
+  favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Photo", default: [] }]
 });
 
 /**

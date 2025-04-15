@@ -3,19 +3,18 @@ import {
     Button, TextField,
     ImageList, ImageListItem, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Typography
 } from '@mui/material';
-import './userPhotos.css';
+import './userFavorites.css';
 import axios from 'axios';
 
 
 /**
- * Define UserPhotos, a React component of project #5
+ * Define UserFavorites, a React component of project #5
  */
-class UserPhotos extends React.Component {
+class UserFavorites extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             user_id : undefined,
-            photos: undefined,
             favorites: undefined,
             new_comment: undefined,
             add_comment: false,
@@ -29,47 +28,36 @@ class UserPhotos extends React.Component {
         const new_user_id = this.props.match.params.userId;
         this.handleUserChange(new_user_id);
     }
-
-    componentDidUpdate() {
+// could cause error
+    componentDidUpdate(prevProps) {
         const new_user_id = this.props.match.params.userId;
-        const current_user_id = this.state.user_id;
-        if (current_user_id  !== new_user_id){
+        if (prevProps.match.params.userId !== new_user_id) {
             this.handleUserChange(new_user_id);
         }
     }
+    
 
-    handleUserChange(user_id){
-        axios.get("/photosOfUser/" + user_id)
-            .then((response) =>
-            {
-                console.log('then');
+    handleUserChange(user_id) {
+        axios.get("/favorites/" + user_id)
+            .then((response) => {
+                const favorites = response.data.favorites;
                 this.setState({
-                    user_id : user_id,
-                    photos: response.data
+                    user_id: user_id,
+                    favorites: favorites
                 });
+                return axios.get("/user/" + user_id);
             })
-            .catch(() => {
-                console.log('catch');
-            });
-        axios.get("/user/" + user_id)
-            .then((response) =>
-            {
-                const new_user = response.data;
-                const main_content = "User Photos for " + new_user.first_name + " " + new_user.last_name;
+            .then((response) => {
+                const user = response.data;
+                const main_content = "Favorites for " + user.first_name + " " + user.last_name;
                 this.props.changeMainContent(main_content);
             })
-            .catch(() =>
-            {
-                console.log('catch2');
+            .catch((error) => {
+                console.log('catch', error);
             });
-        axios.get(`/favorites/${this.props.current_user_id}`)
-            .then((response) => {
-                this.setState({
-                    favorites: response.data.favorites
-                });
-            });
-
     }
+    
+    
 
     handleNewCommentChange = (event) => {
         this.setState({
@@ -111,11 +99,11 @@ class UserPhotos extends React.Component {
                     new_comment: undefined,
                     current_photo_id: undefined
                 });
-                axios.get("/photosOfUser/" + user_id)
+                axios.get("/favorites/" + user_id)
                     .then((response) =>
                     {
                         this.setState({
-                            photos: response.data
+                            favorites: response.data.favorites
                         });
                     });
             })
@@ -123,22 +111,6 @@ class UserPhotos extends React.Component {
                 console.log(error);
             });
     };
-
-    handleAddToFavorites = (user_id, photo_id) => {
-        axios.post(`/favorites/${user_id}`, { photo_id })
-            .then(() => {
-                return axios.get(`/favorites/${user_id}`);
-            })
-            .then((response) => {
-                this.setState({
-                    favorites: response.data.favorites
-                });
-            })
-            .catch(error => {
-                console.error("Error adding to favorites:", error);
-            });
-    };
-    
 
     handleRemoveFromFavorites = (user_id, photo_id) => {
         console.log(`Deleting favorite for user ${user_id} and photo ${photo_id}`);
@@ -156,14 +128,8 @@ class UserPhotos extends React.Component {
             });
     };
 
-    isFavorite(photoId) {
-        return this.state.favorites?.some((fav) => fav._id === photoId);
-    }
-    
-    
-
     render() {
-        const hasPhotos = this.state.photos && this.state.photos.length > 0;
+        const hasFavorites = this.state.favorites && this.state.favorites.length > 0;
     
         return (
             <div>
@@ -173,29 +139,18 @@ class UserPhotos extends React.Component {
                     </Button>
                 </div>
     
-                {hasPhotos ? (
+                {hasFavorites ? (
                     <ImageList variant="masonry" cols={1} gap={8}>
-                        {this.state.photos.map((item) => (
+                        {this.state.favorites.map((item) => (
                             <div key={item._id}>
                                 <TextField label="Photo Date" variant="outlined" disabled fullWidth margin="normal"
                                            value={item.date_time} />
-                                {this.isFavorite(item._id) ? (
-                                    <Button
+                                <Button
                                     variant="contained"
-                                    onClick={() => this.handleRemoveFromFavorites(this.props.current_user_id, item._id)}
-                                    >
+                                    onClick={() => this.handleRemoveFromFavorites(this.state.user_id, item._id)}
+                                >
                                     Unfavorite
-                                    </Button>
-
-                                    ) : (
-                                        <Button
-                                    variant="contained"
-                                    onClick={() => this.handleAddToFavorites(this.props.current_user_id, item._id)}
-                                    >
-                                    Favorite
-                                    </Button>
-                                    )
-                                }
+                                </Button>
                                 <ImageListItem key={item.file_name}>
                                     <img
                                         src={`images/${item.file_name}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
@@ -210,9 +165,9 @@ class UserPhotos extends React.Component {
                                             <TextField label="Comment Date" variant="outlined" disabled fullWidth
                                                        margin="normal" value={comment.date_time} />
                                             <TextField label="User" variant="outlined" disabled fullWidth
-                                                       margin="normal"
-                                                       value={comment.user.first_name + " " + comment.user.last_name}
-                                                       component="a" href={"#/users/" + comment.user._id}>
+                                                margin="normal"
+                                                value={comment.user_id ? comment.user_id.first_name + " " + comment.user_id.last_name : "Unknown User"}
+                                                component="a" href={comment.user_id ? "#/users/" + comment.user_id._id : "#"}>
                                             </TextField>
                                             <TextField label="Comment" variant="outlined" disabled fullWidth
                                                        margin="normal" multiline rows={4} value={comment.comment} />
@@ -229,7 +184,7 @@ class UserPhotos extends React.Component {
                     </ImageList>
                 ) : (
                     <TextField variant="outlined" disabled fullWidth
-                        margin="normal" value="No Photos" />
+                        margin="normal" value="No Favorites" />
                 )}
     
                 <Dialog open={this.state.add_comment}>
@@ -259,4 +214,4 @@ class UserPhotos extends React.Component {
         );
     }
 }
-export default UserPhotos;
+export default UserFavorites;

@@ -171,6 +171,7 @@ app.post("/user", function (request, response) {
   const occupation = request.body.occupation || "";
   const login_name = request.body.login_name || "";
   const password = request.body.password || "";
+  const favorites = request.body.favorites || [];
 
   if (first_name === "") {
     console.error("Error in /user", first_name);
@@ -210,7 +211,8 @@ app.post("/user", function (request, response) {
               description: description,
               occupation: occupation,
               login_name: login_name,
-              password: password
+              password: password,
+              favorites: favorites,
             })
             .then((user) => {
               request.session.user_id = user._id;
@@ -356,6 +358,55 @@ app.post("/admin/logout", function (request, response) {
   });
 });
 
+/*
+ * URL /favorites/:userId - adds a new photo for the current user
+ */
+
+app.post("/favorites/:user_id", async (req, res) => {
+  const userId = req.params.user_id;
+  const { photo_id } = req.body;
+
+  try {
+    const result = await User.findByIdAndUpdate(
+      userId,
+      { $addToSet: { favorites: photo_id } }, // Ensures no duplicates
+      { new: true }
+    );
+
+    if (!result) return res.status(404).send("User not found");
+
+    res.status(200).send("Photo added to favorites");
+  } catch (err) {
+    console.error("Error adding favorite:", err);
+    res.status(500).send("Server error");
+  }
+});
+
+/**
+ * URL /favorites/:user_id/:photo_id - Removes a favorite from the favorites array.
+ */
+app.delete('/favorites/:user_id/:photo_id', async (req, res) => {
+  if (hasNoUserSession(req, res)) return;
+
+  try {
+    const { user_id, photo_id } = req.params;
+
+    const user = await User.findById(user_id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Remove the photo_id from the user's favorites array
+    user.favorites = user.favorites.filter(favId => favId.toString() !== photo_id);
+    await user.save();
+
+    res.status(200).json({ message: "Favorite removed successfully" });
+  } catch (err) {
+    console.error("Error in DELETE /favorites/:user_id/:photo_id", err);
+    res.status(500).json({ message: "Internal server error", error: err.message });
+  }
+});
+
 /**
  * URL /user/list - Returns all the User objects.
  */
@@ -411,6 +462,35 @@ app.get("/user/:id", function (request, response) {
         return null;
       });
 });
+
+/**
+ * URL /favorites/:id - Returns the favorite Photos for User (id).
+ */
+app.get('/favorites/:id', async (req, res) => {
+  if (hasNoUserSession(req, res)) return;
+
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const favorites = await Photo.find({ _id: { $in: user.favorites } })
+      .populate({
+        path: 'comments.user_id',
+        select: 'first_name last_name'
+      });
+
+    res.json({ favorites });
+  } catch (err) {
+    console.error("Error in GET /favorites/:id", err);
+    res.status(500).json({ message: "Internal server error", error: err.message });
+  }
+});
+
+
+
+
 
 /**
  * URL /photosOfUser/:id - Returns the Photos for User (id).

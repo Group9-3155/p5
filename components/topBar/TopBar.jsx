@@ -118,6 +118,9 @@ class TopBar extends React.Component {
                                     onChange={this.handleNewPhoto}
                                 />
                             </Button>
+                            <Divider orientation="vertical" flexItem/>
+                            <Button variant="contained" component="a" href={"#/favorites/" + this.props.user._id}>Favorites</Button>
+                            <Divider orientation="vertical" flexItem/>
                             <Snackbar anchorOrigin={{vertical: 'top', horizontal: 'left'}} open={this.state.photo_upload_show} autoHideDuration={6000} onClose={this.handleClose}>
                                 {
                                     this.state.photo_upload_success ?
